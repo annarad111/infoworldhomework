@@ -2,6 +2,9 @@
 import {AfterViewInit, Component, ViewChild, OnInit} from '@angular/core';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
+import { Subject, takeUntil } from 'rxjs';
+import { Pacient } from 'src/app/pacient';
+import { PacientService } from 'src/app/pacient.service';
 
 @Component({
   selector: 'app-table',
@@ -10,7 +13,9 @@ import {MatTableDataSource} from '@angular/material/table';
 })
 export class TableComponent implements OnInit {
 
-  constructor() { }
+  constructor(private pacientservice: PacientService) { }
+
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   ngOnInit(): void {
   }
@@ -24,7 +29,11 @@ export class TableComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
   }
 }
-
+    getAllUsers() {
+      this.pacientservice.getUsers().pipe(takeUntil(this.destroy$)).subscribe((users: any[]) => {
+      this.users = users;
+  });
+}
 export interface PeriodicElement {
   name: string;
   position: number;
